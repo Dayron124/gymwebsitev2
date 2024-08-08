@@ -1,6 +1,6 @@
 import express from 'express';
 import { getAllForums, createForum, getForumById, updateForum, deleteForum } from '../controllers/forumController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import {authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

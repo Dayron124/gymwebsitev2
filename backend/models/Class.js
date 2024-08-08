@@ -15,7 +15,7 @@ const classSchema = mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now
+    required: true
   }
 }, {
   timestamps: true

@@ -10,13 +10,14 @@ const trackerSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  data: {
-    type: mongoose.Schema.Types.Mixed,
+  value: {
+    type: Number,
     required: true
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    required: true
   }
 }, {
   timestamps: true

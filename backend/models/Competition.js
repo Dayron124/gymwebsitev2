@@ -5,11 +5,15 @@ const competitionSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String,
+    required: true
+  },
   date: {
     type: Date,
     required: true
   },
-  description: {
+  location: {
     type: String,
     required: true
   }
