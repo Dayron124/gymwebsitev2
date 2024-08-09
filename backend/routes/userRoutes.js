@@ -1,9 +1,12 @@
+// backend/routes/userRoutes.js
 import express from 'express';
-import { authMiddleware } from '../middleware/authMiddleware.js';
-import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { registerUser, loginUser, getUserProfile } from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.route('/profile').get(authMiddleware, getUserProfile).put(authMiddleware, updateUserProfile);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/profile', protect, getUserProfile);
 
 export default router;

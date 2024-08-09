@@ -1,33 +1,40 @@
+// backend/models/User.js
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 
-const userSchema = mongoose.Schema({
-  name: {
-    type: String,
-    required: true
+const userSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    profileImage: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    contactPreference: {
+      type: String,
+      enum: ['Email', 'Phone', 'Text'],
+      default: 'Email',
+    },
+    goals: {
+      type: String,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  isAdmin: {
-    type: Boolean,
-    required: true,
-    default: false
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-});
-
-// Method to match user-entered password with the hashed password
-userSchema.methods.matchPassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+);
 
 const User = mongoose.model('User', userSchema);
 

@@ -1,0 +1,244 @@
+/* General styles for the application */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Navbar styles */
+  .navbar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #333; /* Matches general nav style */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-content {
+      flex-direction: column;
+    }
+  }
+  
+  .brand-container {
+    text-align: center;
+  }
+  
+  .brand-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff416c;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .slogan {
+    font-size: 1rem;
+    color: #ff416c;
+    margin-top: 0.5rem;
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .navbar-links li {
+    margin: 0;
+    position: relative;
+  }
+  
+  .navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .navbar-links a:hover {
+    background-color: #ff416c;
+    color: #fff;
+  }
+  
+  /* Dropdown menu styling */
+  .dropdown-menu,
+  .profile-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff; /* Ensure background is white */
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+    top: 100%;
+    flex-direction: column; /* Ensure items are stacked vertically */
+  }
+  
+  .navbar-links li:hover .dropdown-menu,
+  .profile-dropdown:hover .dropdown-content {
+    display: flex; /* Use flex to ensure vertical stacking */
+  }
+  
+  .dropdown-menu a,
+  .profile-dropdown .dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .dropdown-menu a:hover,
+  .profile-dropdown .dropdown-content a:hover {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* Profile dropdown */
+  .profile-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-icon {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ff416c;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: none;
+    transition: color 0.3s ease;
+  }
+  
+  .profile-icon:hover {
+    color: #ff4b2b;
+  }
+  
+  /* Hero section */
+  .hero {
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .hero h1 {
+    font-size: 3rem;
+    margin: 0;
+  }
+  
+  .hero p {
+    font-size: 1.5rem;
+  }
+  
+  .hero .btn {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    color: #ff416c;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Footer */
+  footer {
+    margin-top: auto;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+  }
+  
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: block;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #ff416c;
+      text-align: center;
+      line-height: 30px;
+    }
+  
+    .hamburger {
+      width: 20px;
+      height: 2px;
+      background-color: #fff;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+  
+    .hamburger::before,
+    .hamburger::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 2px;
+      background-color: #fff;
+      transition: all 0.3s ease;
+    }
+  
+    .hamburger::before {
+      top: -6px;
+    }
+  
+    .hamburger::after {
+      bottom: -6px;
+    }
+  
+    .menu-toggle.active .hamburger {
+      background-color: transparent;
+    }
+  
+    .menu-toggle.active .hamburger::before {
+      transform: rotate(45deg);
+      top: 0;
+    }
+  
+    .menu-toggle.active .hamburger::after {
+      transform: rotate(-45deg);
+      bottom: 0;
+    }
+  }
+  
