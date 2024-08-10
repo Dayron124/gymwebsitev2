@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MyProfile from './pages/MyProfile';
 import Preferences from './pages/Preferences';
+import BlogsPage from './components/BlogsPage';
 
 function App() {
   return (
@@ -26,8 +27,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<MyProfile />} />
         <Route path="/preferences" element={<Preferences />} />
+        <Route path="/blogs" element={<BlogsPage />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }

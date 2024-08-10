@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../assets/styles/styles.css';  // Adjust path based on the location of styles.css
+import '../assets/styles/styles.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -38,20 +38,16 @@ const Navbar = () => {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
             <Link to="#">Programs</Link>
             <div className="dropdown-menu">
               <Link to="/classes">Classes</Link>
               <Link to="/workouts">Workouts</Link>
-              <Link to="/nutrition">Nutrition</Link>
             </div>
           </li>
           <li>
             <Link to="#">Community</Link>
             <div className="dropdown-menu">
-              <Link to="/blog">Blog</Link>
+              <Link to="/blogs">Blog</Link>
               <Link to="/events">Events</Link>
               <Link to="/forums">Forums</Link>
             </div>
@@ -68,9 +64,7 @@ const Navbar = () => {
                 <div className="dropdown-content">
                   <Link to="/profile">My Profile</Link>
                   <Link to="/preferences">Preferences</Link>
-                  <a href="#logout" onClick={handleLogout}>
-                    Logout
-                  </a>
+                  <button onClick={handleLogout}>Logout</button>
                 </div>
               )}
             </div>

@@ -43,7 +43,6 @@ const RegisterContainer = styled.div`
   }
 `;
 
-// Register component handling user registration
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -77,6 +76,6 @@ const Register = () => {
       </form>
     </RegisterContainer>
   );
-}
+};
 
 export default Register;

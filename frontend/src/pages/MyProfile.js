@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Container,
   Grid,
@@ -10,11 +10,12 @@ import {
   Tabs,
   Tab,
   Box,
-  //IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import SaveIcon from '@mui/icons-material/Save';
@@ -36,15 +37,36 @@ const Profile = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [openCropper, setOpenCropper] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [initialValues, setInitialValues] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    contactPreference: '',
+    goals: '',
+  });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const cropperRef = useRef(null);
 
-  const initialValues = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '123-456-7890',
-    contactPreference: 'Email',
-    goals: 'Lose 10 pounds',
-  };
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/profile', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          },
+        });
+        const { name, email, phone, contactPreference, goals, profileImage } = response.data;
+        setInitialValues({ name, email, phone, contactPreference, goals });
+        setProfileImage(profileImage);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -73,7 +95,7 @@ const Profile = () => {
         const formData = new FormData();
         formData.append('profileImage', blob, 'profile.png');
 
-        const response = await axios.post('/api/profile/upload', formData, {
+        const response = await axios.post('http://localhost:5000/api/profile/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -83,12 +105,14 @@ const Profile = () => {
       }
 
       // Update profile information
-      await axios.put('/api/profile', values, {
+      await axios.put('http://localhost:5000/api/profile', values, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
+      // Open Snackbar to show success message
+      setOpenSnackbar(true);
       console.log('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -141,6 +165,7 @@ const Profile = () => {
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
+                enableReinitialize
                 onSubmit={handleSubmit}
               >
                 {({ values, errors, touched, handleChange, handleBlur }) => (
@@ -223,6 +248,18 @@ const Profile = () => {
           </Grid>
         </Grid>
       </Paper>
+
+      {/* Snackbar for showing success message */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000} // Auto hide after 3 seconds
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} // Position at the bottom-center
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          Profile updated successfully!
+        </Alert>
+      </Snackbar>
 
       {/* Image Cropper Dialog */}
       <Dialog open={openCropper} onClose={() => setOpenCropper(false)}>

@@ -1,11 +1,11 @@
 import React from 'react';
-import HeroSection from './HeroSection';
-import FeaturesSection from './FeaturesSection';
-import AboutUsSection from './AboutUsSection';
-import TestimonialsSection from './TestimonialsSection';
-import BlogSection from './BlogSection';
-import CTASection from './CTASection';
-import Footer from './Footer';
+import HeroSection from '../components/HeroSection';
+import FeaturesSection from '../components/FeaturesSection';
+import AboutUsSection from '../components/AboutUsSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import BlogSection from '../components/BlogSection';
+import CTASection from '../components/CTASection';
+//import Footer from '../components/Footer';
 
 const HomePage = () => {
   return (
@@ -16,7 +16,6 @@ const HomePage = () => {
       <TestimonialsSection />
       <BlogSection />
       <CTASection />
-      <Footer />
     </div>
   );
 };

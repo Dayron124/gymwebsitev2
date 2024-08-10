@@ -1,4 +1,3 @@
-// backend/routes/userRoutes.js
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import { registerUser, loginUser, getUserProfile } from '../controllers/userController.js';

@@ -68,7 +68,6 @@ const LoginContainer = styled.div`
   }
 `;
 
-// Login component handling user login
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,10 +79,9 @@ const Login = () => {
     try {
       const response = await axios.post('/api/users/login', { email, password });
       localStorage.setItem('authToken', response.data.token);
-      navigate('/');
+      navigate('/'); // Redirect after successful login
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed');
-      console.error(error);
     }
   };
 
@@ -112,6 +110,6 @@ const Login = () => {
       </form>
     </LoginContainer>
   );
-}
+};
 
 export default Login;
