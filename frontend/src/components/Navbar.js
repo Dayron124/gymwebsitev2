@@ -5,11 +5,13 @@ import '../assets/styles/styles.css';
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('authToken');
+  const user = JSON.parse(localStorage.getItem('user')); // Get user data from localStorage
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     navigate('/');
   };
 
@@ -64,6 +66,9 @@ const Navbar = () => {
                 <div className="dropdown-content">
                   <Link to="/profile">My Profile</Link>
                   <Link to="/preferences">Preferences</Link>
+                  {user && user.role === 'admin' && (
+                    <Link to="/admin/dashboard">Admin Dashboard</Link>
+                  )}
                   <button onClick={handleLogout}>Logout</button>
                 </div>
               )}

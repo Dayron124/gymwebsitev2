@@ -43,6 +43,7 @@ export const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role, // Include role in response
       },
       token,
     });
@@ -57,32 +58,24 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const token = generateToken(user._id);
+
+      res.status(200).json({
+        token,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role, // Include role in response
+        },
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    // Compare the provided password with the hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Generate a JWT token for the user
-    const token = generateToken(user._id);
-
-    // Send the user data and token in the response
-    res.status(200).json({
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-      token,
-    });
   } catch (error) {
-    console.error(`Error logging in user: ${error.message}`);
+    console.error('Login error:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -90,7 +83,6 @@ export const loginUser = async (req, res) => {
 // Get user profile
 export const getUserProfile = async (req, res) => {
   try {
-    // Find the user by ID and exclude the password from the response
     const user = await User.findById(req.user.id).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -107,31 +99,24 @@ export const updateUserProfile = async (req, res) => {
   const { name, email, password, goals, calories } = req.body;
 
   try {
-    // Find the user by ID
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user details if provided
     user.name = name || user.name;
     user.email = email || user.email;
     user.goals = goals || user.goals;
     user.calories = calories || user.calories;
 
-    // Hash the new password if it's provided
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
 
-    // Save the updated user to the database
     const updatedUser = await user.save();
-
-    // Generate a new JWT token
     const token = generateToken(updatedUser._id);
 
-    // Send the updated user data and token in the response
     res.json({
       user: {
         _id: updatedUser._id,
@@ -144,6 +129,53 @@ export const updateUserProfile = async (req, res) => {
     });
   } catch (error) {
     console.error(`Error updating user profile: ${error.message}`);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Admin-specific: Get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching all users:', error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Admin-specific: Update user by ID
+export const updateUser = async (req, res) => {
+  const { role } = req.body;
+
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (role) {
+      user.role = role;
+    }
+
+    const updatedUser = await user.save();
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Admin-specific: Delete user by ID
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted' });
+  } catch (error) {
+    console.error('Error deleting user:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };

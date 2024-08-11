@@ -1,76 +1,93 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from '../server.js';
+import request from 'supertest';
+import mongoose from 'mongoose';
+import app from '../server.js'; // Adjust the path if necessary
 import User from '../models/User.js';
-import generateTestToken from '../utils/generateToken.js';
+import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 
-const { expect } = chai;
-chai.use(chaiHttp);
+dotenv.config({ path: '.env.test' });
 
-describe('Admin API', function() {
-  this.timeout(10000); // Increased timeout to 10 seconds
+beforeAll(async () => {
+  // Connect to the test database
+  await mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+});
 
-  let adminUser, regularUser, adminToken, userId;
+afterAll(async () => {
+  // Clean up and close the database connection
+  await mongoose.connection.dropDatabase();
+  await mongoose.connection.close();
+});
 
-  before(async () => {
-    // Clean up database before running tests
-    await User.deleteMany({});
+describe('Admin Routes', () => {
+  let adminToken;
+  let userId;
 
-    // Create a test admin user
-    adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'adminpassword',
-      isAdmin: true,
-    });
-    await adminUser.save();
-    adminToken = generateTestToken(adminUser._id);
-    console.log('Generated Admin Token:', adminToken);
+  beforeAll(async () => {
+    // Create an admin user and get a token
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('adminpassword', salt);
 
-    // Create a regular user
-    regularUser = new User({
-      name: 'Regular User',
-      email: 'user@example.com',
-      password: 'userpassword',
+    // Check if the admin already exists
+    const existingAdmin = await User.findOne({ email: 'admin@example.com' });
+    if (!existingAdmin) {
+      const admin = new User({
+        name: 'Admin User',
+        email: 'admin@example.com',
+        password: hashedPassword,
+        isAdmin: true,
+      });
+
+      await admin.save();
+    }
+
+    // Login as admin to get a token
+    const loginResponse = await request(app)
+      .post('/api/users/login')
+      .send({ email: 'admin@example.com', password: 'adminpassword' });
+
+    adminToken = loginResponse.body.token;
+
+    // Create a test user for admin operations
+    const testUser = new User({
+      name: 'Test User',
+      email: 'testuser@example.com',
+      password: hashedPassword,
       isAdmin: false,
     });
-    await regularUser.save();
-    userId = regularUser._id;
+
+    await testUser.save();
+    userId = testUser._id;
   });
 
-  it('should get all users (admin only)', (done) => {
-    chai.request(app)
+  test('GET /api/admin/users - should fetch all users', async () => {
+    const response = await request(app)
       .get('/api/admin/users')
-      .set('Authorization', `Bearer ${adminToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('array');
-        expect(res.body.length).to.be.greaterThan(0);
-        done();
-      });
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBeGreaterThan(0); // Ensure at least one user is present
   });
 
-  it('should update a user (admin only)', (done) => {
-    chai.request(app)
+  test('PUT /api/admin/users/:id - should update a user', async () => {
+    const response = await request(app)
       .put(`/api/admin/users/${userId}`)
       .set('Authorization', `Bearer ${adminToken}`)
-      .send({ isAdmin: true })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('isAdmin').eql(true);
-        done();
-      });
+      .send({ isAdmin: true });
+
+    expect(response.status).toBe(200);
+    expect(response.body.isAdmin).toBe(true);
   });
 
-  it('should delete a user (admin only)', (done) => {
-    chai.request(app)
+  test('DELETE /api/admin/users/:id - should delete a user', async () => {
+    const response = await request(app)
       .delete(`/api/admin/users/${userId}`)
-      .set('Authorization', `Bearer ${adminToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property('message').eql('User deleted');
-        done();
-      });
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('User deleted');
   });
 });

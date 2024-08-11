@@ -78,7 +78,16 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post('/api/users/login', { email, password });
-      localStorage.setItem('authToken', response.data.token);
+      const { token, user } = response.data;
+
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role // Ensure role is included
+      }));
+
       navigate('/'); // Redirect after successful login
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed');

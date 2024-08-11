@@ -1,24 +1,19 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import morgan from 'morgan'; // Logger middleware
-import helmet from 'helmet'; // Security middleware
-import xssClean from 'xss-clean'; // Prevent XSS attacks
-import rateLimit from 'express-rate-limit'; // Rate limiting
-import cors from 'cors'; // CORS handling
-import compression from 'compression'; // Gzip compression
+import morgan from 'morgan';
+import helmet from 'helmet';
+import xssClean from 'xss-clean';
+import rateLimit from 'express-rate-limit';
+import cors from 'cors';
+import compression from 'compression';
 import path from 'path';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
-import profileRoutes from './routes/profileRoutes.js'; // Import profile routes
-import { notFound, errorHandler } from './middleware/errorMiddleware.js'; // Import named exports
+import profileRoutes from './routes/profileRoutes.js';
+import eventRoutes from './routes/eventRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
-dotenv.config();
-
-// Ensure necessary environment variables are set
-if (!process.env.MONGO_URI) {
-  console.error('FATAL ERROR: MONGO_URI is not defined.');
-  process.exit(1);
-}
+dotenv.config({ path: '.env' });
 
 connectDB();
 
@@ -33,8 +28,8 @@ app.use(express.json());
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend's origin
-  credentials: true, // Allow credentials like cookies and authorization headers
+  origin: 'http://localhost:3000',
+  credentials: true,
 }));
 
 // Request logging
@@ -52,9 +47,15 @@ app.use(limiter);
 // Compression middleware
 app.use(compression());
 
-// Routes
+// Register routes
 app.use('/api/users', userRoutes);
-app.use('/api/profile', profileRoutes); // Register profile routes
+app.use('/api/profile', profileRoutes); // Ensure the route prefix matches
+app.use('/api/events', eventRoutes);
+
+// Test route
+app.post('/api/test', (req, res) => {
+  res.status(200).json({ message: 'Test route works!' });
+});
 
 // Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
@@ -75,3 +76,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
+
+export default app;
