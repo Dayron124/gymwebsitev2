@@ -13,3 +13,6 @@ Thumbs.db
 
 # IDE files
 .vscode/
+backend/.env.test
+backend/config/cloudinary.js
+backend/config/cloudinary.js
