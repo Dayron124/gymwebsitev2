@@ -1,35 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/styles/styles.css'; // Ensure path is correct
 
 const AdminDashboard = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const sidebarRef = useRef(null);
-
-  // Close the menu when clicking outside of it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target) && !event.target.closest('.menu-toggle')) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleMenuToggle = () => {
-    setMenuOpen(prevState => !prevState);
-  };
-
   return (
     <div className="admin-dashboard">
-      <aside className={`admin-sidebar ${menuOpen ? 'open' : ''}`} ref={sidebarRef}>
+      <aside className="admin-sidebar">
         <div className="sidebar-header">
           <h2 className="sidebar-logo">Admin</h2>
-          <button className="menu-toggle" onClick={handleMenuToggle}>
-            <div className={`hamburger ${menuOpen ? 'active' : ''}`}></div>
-          </button>
         </div>
         <ul className="sidebar-menu">
           <li><Link to="/admin/dashboard">Dashboard</Link></li>
