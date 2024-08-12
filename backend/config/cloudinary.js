@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
 
 // Ensure the environment variables are correctly logged
 console.log('Cloudinary Config:', {
